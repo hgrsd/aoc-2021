@@ -1,10 +1,12 @@
+open Common
+
 type State =
   { Increases: int
     Previous: int option }
 
 let initialState = { Increases = 0; Previous = None }
 
-let sumInc acc cur =
+let folder acc cur =
   match acc.Previous with
   | None -> { Increases = 0; Previous = Some cur }
   | Some prevVal when cur > prevVal ->
@@ -14,24 +16,19 @@ let sumInc acc cur =
     { Increases = acc.Increases
       Previous = Some cur }
 
-let parse = List.map int
+let sumInc = List.fold folder initialState
+
+let part1 = sumInc >> printfn "part 1: %A"
+
+let part2 =
+  List.windowed 3
+  >> List.map List.sum
+  >> sumInc
+  >> printfn "part 2: %A"
 
 [<EntryPoint>]
 let main _ =
-  let parsed =
-    Common.loadFile $"{__SOURCE_DIRECTORY__}/input"
-    |> parse
-
-  // part 1
-  parsed
-  |> List.fold sumInc initialState
-  |> printfn "%A"
-
-  // part 2
-  parsed
-  |> List.windowed 3
-  |> List.map List.sum
-  |> List.fold sumInc initialState
-  |> printfn "%A"
+  $"{__SOURCE_DIRECTORY__}/input"
+  |> solve int [ part1; part2 ]
 
   0
