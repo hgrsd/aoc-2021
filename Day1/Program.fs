@@ -1,4 +1,4 @@
-open Common
+open Common.Solve
 
 type State =
   { Increases: int
